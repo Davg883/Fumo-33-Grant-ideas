@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fumo 33 Signal Platform Proposal</title>
+    <style>
+      :root {
+        --coal: #050504;
+        --iron: #161615;
+        --smoke: #2b2a27;
+        --stone: #d8d0c1;
+        --paper: #eee0c3;
+        --paper-soft: #f7f0e1;
+        --amber: #d49243;
+        --copper: #a96434;
+        --cyan: #64c8df;
+        --green: #1d6d55;
+        --red: #b8392f;
+        --line: rgba(238, 224, 195, 0.18);
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background: var(--coal);
+        color: var(--paper-soft);
+      }
+
+      img {
+        display: block;
+        width: 100%;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 1px solid rgba(238, 224, 195, 0.14);
+        background: rgba(5, 5, 4, 0.84);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        min-height: 66px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 22px;
+      }
+
+      .brand {
+        display: grid;
+        gap: 2px;
+      }
+
+      .brand strong {
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--paper);
+      }
+
+      .brand span,
+      .nav-links a,
+      .eyebrow,
+      .small,
+      .metric span,
+      th,
+      td,
+      .phase-year,
+      .tag {
+        font-family: "IBM Plex Mono", "Courier New", monospace;
+      }
+
+      .brand span {
+        font-size: 0.72rem;
+        color: rgba(238, 224, 195, 0.66);
+      }
+
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 16px;
+      }
+
+      .nav-links a {
+        font-size: 0.73rem;
+        color: rgba(238, 224, 195, 0.72);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 82vh;
+        display: grid;
+        align-items: end;
+        overflow: hidden;
+        border-bottom: 1px solid rgba(238, 224, 195, 0.14);
+      }
+
+      .hero-media {
+        position: absolute;
+        inset: 0;
+      }
+
+      .hero-media img {
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.58) contrast(1.08) saturate(0.88);
+      }
+
+      .hero-media::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(5, 5, 4, 0.86) 0%, rgba(5, 5, 4, 0.58) 38%, rgba(5, 5, 4, 0.16) 72%),
+          linear-gradient(180deg, rgba(5, 5, 4, 0.2) 0%, rgba(5, 5, 4, 0.14) 48%, rgba(5, 5, 4, 0.9) 100%);
+      }
+
+      .hero-content {
+        position: relative;
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 90px 0 48px;
+        display: grid;
+        grid-template-columns: minmax(0, 720px) minmax(260px, 340px);
+        gap: 36px;
+        align-items: end;
+      }
+
+      .eyebrow {
+        margin: 0 0 18px;
+        color: var(--cyan);
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 22px;
+        max-width: 700px;
+        font-size: clamp(3.2rem, 7vw, 5.4rem);
+        line-height: 0.88;
+        letter-spacing: 0;
+        color: #fff7e6;
+        text-wrap: balance;
+      }
+
+      .hero-copy {
+        max-width: 650px;
+        margin-bottom: 30px;
+        font-size: clamp(1.08rem, 2vw, 1.45rem);
+        line-height: 1.48;
+        color: rgba(247, 240, 225, 0.88);
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .button {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 12px 16px;
+        border: 1px solid rgba(238, 224, 195, 0.3);
+        background: rgba(22, 22, 21, 0.78);
+        color: var(--paper);
+        text-decoration: none;
+        font-family: "IBM Plex Mono", "Courier New", monospace;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .button.primary {
+        border-color: rgba(212, 146, 67, 0.72);
+        background: var(--amber);
+        color: #14100b;
+        font-weight: 800;
+      }
+
+      .proposal-panel {
+        border: 1px solid rgba(238, 224, 195, 0.18);
+        background: rgba(5, 5, 4, 0.68);
+        box-shadow: var(--shadow);
+        padding: 22px;
+      }
+
+      .proposal-panel dl {
+        margin: 0;
+        display: grid;
+        gap: 18px;
+      }
+
+      .proposal-panel dt {
+        color: rgba(238, 224, 195, 0.56);
+        font-family: "IBM Plex Mono", "Courier New", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .proposal-panel dd {
+        margin: 4px 0 0;
+        color: var(--paper-soft);
+        font-size: 1.05rem;
+        line-height: 1.32;
+      }
+
+      main {
+        background:
+          linear-gradient(180deg, var(--coal) 0%, #11100e 40%, #191715 100%);
+      }
+
+      section {
+        padding: 86px 0;
+        border-bottom: 1px solid rgba(238, 224, 195, 0.1);
+      }
+
+      .wrap {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.88fr) minmax(280px, 0.62fr);
+        gap: 42px;
+        align-items: end;
+        margin-bottom: 38px;
+      }
+
+      h2 {
+        margin-bottom: 0;
+        font-size: clamp(2.1rem, 5vw, 4.8rem);
+        line-height: 0.92;
+        color: var(--paper);
+        text-wrap: balance;
+      }
+
+      .section-head p,
+      .lede {
+        margin-bottom: 0;
+        font-size: 1.1rem;
+        line-height: 1.62;
+        color: rgba(247, 240, 225, 0.72);
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        background: rgba(238, 224, 195, 0.14);
+        border: 1px solid rgba(238, 224, 195, 0.14);
+      }
+
+      .metric {
+        min-height: 142px;
+        padding: 20px;
+        background: rgba(16, 15, 13, 0.96);
+      }
+
+      .metric strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: clamp(1.8rem, 4vw, 3.4rem);
+        line-height: 0.9;
+        color: var(--amber);
+      }
+
+      .metric span {
+        color: rgba(247, 240, 225, 0.72);
+        font-size: 0.76rem;
+        line-height: 1.35;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+        gap: 44px;
+        align-items: start;
+      }
+
+      .image-frame {
+        border: 1px solid rgba(238, 224, 195, 0.16);
+        background: #0b0a09;
+        box-shadow: var(--shadow);
+      }
+
+      .image-frame img {
+        object-fit: cover;
+      }
+
+      .caption {
+        margin: 0;
+        padding: 14px 16px;
+        color: rgba(238, 224, 195, 0.62);
+        font-family: "IBM Plex Mono", "Courier New", monospace;
+        font-size: 0.72rem;
+        line-height: 1.45;
+        border-top: 1px solid rgba(238, 224, 195, 0.1);
+      }
+
+      .timeline {
+        display: grid;
+        gap: 18px;
+      }
+
+      .phase {
+        display: grid;
+        grid-template-columns: 94px minmax(0, 1fr);
+        gap: 18px;
+        padding: 22px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .phase:last-child {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .phase-year {
+        color: var(--amber);
+        font-size: 0.9rem;
+        letter-spacing: 0.1em;
+      }
+
+      .phase h3 {
+        margin-bottom: 8px;
+        color: #fff7e6;
+        font-size: 1.55rem;
+        line-height: 1.08;
+      }
+
+      .phase p,
+      .feature p,
+      .case-item p {
+        margin-bottom: 0;
+        color: rgba(247, 240, 225, 0.72);
+        font-size: 1rem;
+        line-height: 1.58;
+      }
+
+      .feature-grid,
+      .case-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: rgba(238, 224, 195, 0.13);
+        border: 1px solid rgba(238, 224, 195, 0.13);
+      }
+
+      .feature,
+      .case-item {
+        min-height: 245px;
+        padding: 24px;
+        background: rgba(16, 15, 13, 0.98);
+      }
+
+      .tag {
+        display: inline-block;
+        margin-bottom: 18px;
+        color: var(--cyan);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .feature h3,
+      .case-item h3 {
+        margin-bottom: 12px;
+        color: #fff7e6;
+        font-size: 1.42rem;
+        line-height: 1.12;
+      }
+
+      .technical {
+        background: #e8ddca;
+        color: #161615;
+      }
+
+      .technical h2,
+      .technical .eyebrow {
+        color: #161615;
+      }
+
+      .technical .section-head p {
+        color: rgba(22, 22, 21, 0.72);
+      }
+
+      .compliance-list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        background: rgba(22, 22, 21, 0.14);
+        border: 1px solid rgba(22, 22, 21, 0.14);
+      }
+
+      .compliance-item {
+        padding: 24px;
+        background: #f4ead8;
+      }
+
+      .compliance-item strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.16rem;
+        color: #161615;
+      }
+
+      .compliance-item p {
+        margin-bottom: 0;
+        color: rgba(22, 22, 21, 0.72);
+        line-height: 1.55;
+      }
+
+      .cost-table {
+        overflow-x: auto;
+        border: 1px solid rgba(238, 224, 195, 0.14);
+        box-shadow: var(--shadow);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 760px;
+        background: #11100e;
+      }
+
+      th,
+      td {
+        padding: 18px;
+        border-bottom: 1px solid rgba(238, 224, 195, 0.11);
+        text-align: left;
+        vertical-align: top;
+        font-size: 0.88rem;
+        line-height: 1.42;
+      }
+
+      th {
+        color: var(--amber);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        background: #0b0a09;
+      }
+
+      td {
+        color: rgba(247, 240, 225, 0.78);
+      }
+
+      td:last-child,
+      th:last-child {
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      tfoot td {
+        color: #fff7e6;
+        font-size: 1.05rem;
+        font-weight: 800;
+        background: rgba(212, 146, 67, 0.12);
+      }
+
+      .infographic-section {
+        background: #120f0c;
+      }
+
+      .infographic-frame img {
+        max-height: 720px;
+        object-fit: contain;
+        background: #efe7d7;
+      }
+
+      .cta {
+        position: relative;
+        overflow: hidden;
+        background: #090908;
+      }
+
+      .cta-inner {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) minmax(260px, 0.45fr);
+        gap: 42px;
+        align-items: end;
+      }
+
+      .cta h2 {
+        max-width: 860px;
+      }
+
+      .cta p {
+        max-width: 720px;
+        margin: 24px 0 0;
+        color: rgba(247, 240, 225, 0.74);
+        font-size: 1.16rem;
+        line-height: 1.6;
+      }
+
+      .signature {
+        padding: 24px;
+        border-left: 3px solid var(--amber);
+        background: rgba(238, 224, 195, 0.06);
+      }
+
+      .signature strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--paper);
+        font-size: 1.3rem;
+      }
+
+      .signature span {
+        display: block;
+        color: rgba(247, 240, 225, 0.66);
+        line-height: 1.45;
+      }
+
+      @media (max-width: 920px) {
+        .nav {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 14px 0;
+        }
+
+        .nav-links {
+          justify-content: flex-start;
+        }
+
+        .hero-content,
+        .section-head,
+        .split,
+        .cta-inner {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-content {
+          padding-top: 96px;
+        }
+
+        .metrics,
+        .feature-grid,
+        .case-grid,
+        .compliance-list {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 620px) {
+        .nav-links {
+          display: none;
+        }
+
+        .hero {
+          min-height: 90vh;
+        }
+
+        .hero-media::after {
+          background:
+            linear-gradient(180deg, rgba(5, 5, 4, 0.38) 0%, rgba(5, 5, 4, 0.62) 42%, rgba(5, 5, 4, 0.96) 100%);
+        }
+
+        section {
+          padding: 62px 0;
+        }
+
+        .metrics,
+        .feature-grid,
+        .case-grid,
+        .compliance-list {
+          grid-template-columns: 1fr;
+        }
+
+        .phase {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .proposal-panel,
+        .feature,
+        .case-item,
+        .compliance-item,
+        .signature {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Proposal navigation">
+        <div class="brand">
+          <strong>Fumo 33</strong>
+          <span>The Signal Platform proposal</span>
+        </div>
+        <div class="nav-links">
+          <a href="#heritage">Heritage</a>
+          <a href="#technical">Compliance</a>
+          <a href="#digital">Digital layer</a>
+          <a href="#costs">Costs</a>
+          <a href="#grant">Grant case</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-label="Fumo 33 parklet proposal">
+        <div class="hero-media" aria-hidden="true">
+          <img src="assets/fumo-parklet-visual.png" alt="" />
+        </div>
+        <div class="hero-content">
+          <div>
+            <p class="eyebrow">Strategic funding proposal / May 11, 2026</p>
+            <h1>The Signal Platform at 33 Union Street</h1>
+            <p class="hero-copy">
+              A bespoke heritage parklet for Fumo 33: part civic landmark, part high-street trading platform, part
+              sovereign digital infrastructure for Ryde's next chapter.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#costs">View project value</a>
+              <a class="button" href="#grant">Read grant case</a>
+            </div>
+          </div>
+
+          <aside class="proposal-panel" aria-label="Proposal summary">
+            <dl>
+              <div>
+                <dt>To</dt>
+                <dd>The Ownership, Fumo 33</dd>
+              </div>
+              <div>
+                <dt>From</dt>
+                <dd>Senior Grant Strategy Consultant</dd>
+              </div>
+              <div>
+                <dt>Planning reference</dt>
+                <dd>25/01141/FUL</dd>
+              </div>
+              <div>
+                <dt>Funding route</dt>
+                <dd>Ryde Pride in Place capital endowment</dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
+      </section>
+
+      <section aria-labelledby="executive-title">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Executive summary</p>
+              <h2 id="executive-title">Re-commissioning the high ground.</h2>
+            </div>
+            <p>
+              Fumo 33 sits at the junction of Ryde's smuggler, imperial, and modern hospitality histories. The proposal
+              turns that position into a visible civic asset: a high-quality Union Street parklet funded as public realm
+              infrastructure, maintained by Fumo 33, and designed to increase dwell time on the High Street.
+            </p>
+          </div>
+
+          <div class="metrics" aria-label="Core project metrics">
+            <div class="metric">
+              <strong>24</strong>
+              <span>High-spend hospitality covers replacing two static car spaces</span>
+            </div>
+            <div class="metric">
+              <strong>£32.7k</strong>
+              <span>Turnkey 2026 project value including contingency</span>
+            </div>
+            <div class="metric">
+              <strong>200</strong>
+              <span>Years of Ryde history tied to one Union Street anchor</span>
+            </div>
+            <div class="metric">
+              <strong>15-20%</strong>
+              <span>Projected ATV uplift through the secret-menu digital layer</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="heritage" aria-labelledby="heritage-title">
+        <div class="wrap split">
+          <div class="image-frame">
+            <img src="assets/fumo-parklet-visual.png" alt="Visual concept of the Fumo 33 outdoor parklet on Union Street" />
+            <p class="caption">
+              The parklet is presented as street furniture with a heritage purpose: black iron, timber, planting,
+              warm table light, and a direct visual relationship with the existing Fumo frontage.
+            </p>
+          </div>
+
+          <div>
+            <p class="eyebrow">Heritage narrative</p>
+            <h2 id="heritage-title">A 200-year civic continuum.</h2>
+            <div class="timeline">
+              <article class="phase">
+                <div class="phase-year">1831</div>
+                <div>
+                  <h3>The Smuggler's Vault</h3>
+                  <p>
+                    Rugged timber, dark iron, and warehouse detailing evoke the era when contraband brandy moved
+                    "pick-a-back" up Union Street and Ryde's seafront economy lived in the shadows.
+                  </p>
+                </div>
+              </article>
+              <article class="phase">
+                <div class="phase-year">1862</div>
+                <div>
+                  <h3>The Imperial Hub</h3>
+                  <p>
+                    Victorian hoop-top railings and post-office cues honour the period when 32-33 Union Street handled
+                    dispatches connected to Queen Victoria at Osborne House.
+                  </p>
+                </div>
+              </article>
+              <article class="phase">
+                <div class="phase-year">1964</div>
+                <div>
+                  <h3>The Ryde Rhythm</h3>
+                  <p>
+                    The layout remains scooter-adjacent and social, acknowledging the Union Street energy of the Mod
+                    years, Vespas, youth culture, and early heavy music lineage.
+                  </p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="technical" class="technical" aria-labelledby="technical-title">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Technical and regulatory compliance</p>
+              <h2 id="technical-title">Designed for a Highways yes.</h2>
+            </div>
+            <p>
+              The scheme is framed around national guidance and Isle of Wight Council expectations from the start,
+              reducing avoidable objections and keeping the funding conversation focused on civic value.
+            </p>
+          </div>
+
+          <div class="compliance-list">
+            <div class="compliance-item">
+              <strong>Highway licensing</strong>
+              <p>Section 171 structural install allowance, with the 2026 pavement licence fee built into the budget.</p>
+            </div>
+            <div class="compliance-item">
+              <strong>Vehicle protection</strong>
+              <p>Impact-rated planters, wheel stops, and retroreflective bollards protect diners on the one-way system.</p>
+            </div>
+            <div class="compliance-item">
+              <strong>Inclusive access</strong>
+              <p>A 12.7mm flush-threshold transition supports wheelchair users, pushchairs, and accessible service.</p>
+            </div>
+            <div class="compliance-item">
+              <strong>Coastal resilience</strong>
+              <p>Structural calculations follow BS EN 1991-1-4 expectations for Solent wind exposure and storm events.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="digital" aria-labelledby="digital-title">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Vectis ONE integration</p>
+              <h2 id="digital-title">A heritage parklet with a digital pulse.</h2>
+            </div>
+            <p>
+              The digital layer keeps the public realm investment measurable, marketable, and distinctive. It makes the
+              parklet more than extra tables: it becomes a live testbed for Ryde's heritage economy.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature">
+              <span class="tag">WebAR</span>
+              <h3>The Time Machine</h3>
+              <p>
+                QR codes in the Victorian railings let diners peel back Union Street and see an AI-generated 1862 Post
+                Office sorting hall overlaid on the present-day frontage.
+              </p>
+            </article>
+            <article class="feature">
+              <span class="tag">Revenue</span>
+              <h3>The Secret Menu</h3>
+              <p>
+                A scannable Postmaster's Seal unlocks era-themed drinks such as The Pick-a-Back Rum, creating a reason
+                to share, return, and trade up.
+              </p>
+            </article>
+            <article class="feature">
+              <span class="tag">Civic data</span>
+              <h3>Edge-AI Safety</h3>
+              <p>
+                Local edge-inference sensors monitor footfall and dwell time, giving the Town Council a practical Pride
+                in Place return-on-investment signal.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="costs" aria-labelledby="costs-title">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Turnkey build estimate</p>
+              <h2 id="costs-title">2026 capital budget.</h2>
+            </div>
+            <p>
+              The figure below packages the platform, railings, safety, technology, professional sign-off, licensing,
+              and a realistic contingency into one grant-ready project value.
+            </p>
+          </div>
+
+          <div class="cost-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Specification</th>
+                  <th>Est. cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Modular platform</td>
+                  <td>12m x 2.4m slip-resistant composite deck with adjustable substructure.</td>
+                  <td>£12,000</td>
+                </tr>
+                <tr>
+                  <td>Bespoke railings</td>
+                  <td>Hand-forged Victorian hoop-top steel with marine-grade coating.</td>
+                  <td>£7,000</td>
+                </tr>
+                <tr>
+                  <td>Safety hardware</td>
+                  <td>Impact bollards, wheel stops, and DfT-compliant lighting.</td>
+                  <td>£1,800</td>
+                </tr>
+                <tr>
+                  <td>Sovereign tech</td>
+                  <td>Solar power rig, edge-AI sensors, and WebAR hosting.</td>
+                  <td>£4,500</td>
+                </tr>
+                <tr>
+                  <td>Professional fees</td>
+                  <td>Structural engineer sign-off, Section 171, and pavement licensing.</td>
+                  <td>£3,200</td>
+                </tr>
+                <tr>
+                  <td>Contingency</td>
+                  <td>15% buffer for material volatility and install risk.</td>
+                  <td>£4,200</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="2">Total project value</td>
+                  <td>£32,700</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="grant" aria-labelledby="grant-title">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Strategic grant justification</p>
+              <h2 id="grant-title">A heroic anchor project for Union Street.</h2>
+            </div>
+            <p>
+              The Pride in Place case is strongest when the project is not described as private seating, but as a
+              maintained public-realm investment that improves economic velocity, street confidence, and local skills.
+            </p>
+          </div>
+
+          <div class="case-grid">
+            <article class="case-item">
+              <span class="tag">Economic velocity</span>
+              <h3>More value from the same street space</h3>
+              <p>Two passive parking bays become 24 high-spend covers, increasing dwell time and spend density.</p>
+            </article>
+            <article class="case-item">
+              <span class="tag">Public safety</span>
+              <h3>Eyes on the street</h3>
+              <p>Evening dining adds passive surveillance and helps reduce anti-social behaviour in the corridor.</p>
+            </article>
+            <article class="case-item">
+              <span class="tag">Youth upskilling</span>
+              <h3>A live digital heritage case study</h3>
+              <p>Local colleges can use the WebAR layer as a practical creative technology and tourism module.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="infographic-section" aria-labelledby="infographic-title">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Supporting visual evidence</p>
+              <h2 id="infographic-title">From smugglers to Queen Victoria to AI.</h2>
+            </div>
+            <p>
+              The infographic works best as a supporting board within the proposal, showing how the dining concept,
+              AR narrative, loyalty layer, and campaign phases connect.
+            </p>
+          </div>
+
+          <figure class="image-frame infographic-frame">
+            <img
+              src="assets/fumo-history-infographic.jpg"
+              alt="Infographic showing Fumo 33 history from smugglers and Queen Victoria to immersive AI dining"
+            />
+            <figcaption class="caption">
+              Campaign visual: the WebAR Time Machine, Postmaster's Inner Circle, era-themed menus, and three-phase
+              heritage activation.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="cta" aria-labelledby="next-title">
+        <div class="wrap cta-inner">
+          <div>
+            <p class="eyebrow">Conclusion</p>
+            <h2 id="next-title">Saving the Empire, one table at a time.</h2>
+            <p>
+              By building the Signal Platform, Fumo 33 is not simply adding outdoor covers. It is re-commissioning a
+              historic site as a visual and digital landmark for Ryde's high street future. With approval, the formal
+              costed proposal can be submitted for the June 15 BID 3 / Pride in Place funding window.
+            </p>
+          </div>
+          <div class="signature">
+            <strong>David Grannum</strong>
+            <span>Lead Strategist, Vectis ONE</span>
+            <span class="small">Prepared for Fumo 33 Ownership</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
